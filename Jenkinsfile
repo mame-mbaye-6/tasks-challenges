@@ -2,9 +2,9 @@ pipeline {
     agent any
 
     environment {
-        REGISTRY = 'seed.int.repositories.cloud.sap'
-        REPO = 'seed'
-        IMAGE_NAME = 'challenge1image'
+        REGISTRY = 'https://hub.docker.com/'
+        REPO = 'challenge'
+        IMAGE_NAME = 'challenge'
         KUBE_CONFIG = credentials('kubeconfig')  // Assuming you have a Jenkins credential with ID 'kubeconfig'
         DOCKER_CREDENTIALS = credentials('docker-credentials') // Assuming you have a Jenkins credential with ID 'docker-credentials'
     }

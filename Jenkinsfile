@@ -2,52 +2,44 @@ pipeline {
     agent any
 
     environment {
-        REGISTRY = 'https://hub.docker.com/'
-        REPO = 'challenge'
-        IMAGE_NAME = 'challenge'
-        KUBE_CONFIG = credentials('kubeconfig')  // Assuming you have a Jenkins credential with ID 'kubeconfig'
-        DOCKER_CREDENTIALS = credentials('docker-credentials') // Assuming you have a Jenkins credential with ID 'docker-credentials'
+        DOCKER_CREDENTIALS = credentials('dockerhub-credentials-id')
     }
 
     stages {
         stage('Checkout') {
             steps {
-                checkout scm
+                git url: 'https://github.com/mame-mbaye-6/ctf-challenges.git', branch: 'master', credentialsId: 'Github-token'
             }
         }
-        
+
         stage('Build Docker Image') {
             steps {
                 script {
-                    docker.build("${REGISTRY}/${REPO}/${IMAGE_NAME}:${env.BUILD_NUMBER}")
+                    dockerImage = docker.build("mame-mbaye/ctf-challenges:${env.BUILD_ID}")
                 }
             }
         }
-        
+
         stage('Push Docker Image') {
             steps {
                 script {
-                    docker.withRegistry("https://${REGISTRY}", 'docker-credentials') {
-                        docker.image("${REGISTRY}/${REPO}/${IMAGE_NAME}:${env.BUILD_NUMBER}").push()
+                    docker.withRegistry('https://index.docker.io/v1/', 'dockerhub-credentials-id') {
+                        dockerImage.push("${env.BUILD_ID}")
+                        dockerImage.push('latest')
                     }
                 }
             }
         }
-        
+
         stage('Deploy to Kubernetes') {
             steps {
                 script {
-                    withKubeConfig([credentialsId: 'kubeconfig']) {
-                        sh """
-                        kubectl set image deployment/your-deployment your-container=${REGISTRY}/${REPO}/${IMAGE_NAME}:${env.BUILD_NUMBER}
-                        kubectl rollout status deployment/your-deployment
-                        """
-                    }
+                    kubernetesDeploy configs: 'deployment.yaml', kubeConfig: [path: env.KUBE_CONFIG]
                 }
             }
         }
     }
-    
+
     post {
         always {
             cleanWs()

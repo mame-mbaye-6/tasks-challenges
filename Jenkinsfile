@@ -2,20 +2,22 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_CREDENTIALS = credentials('Dockerhub-credentials-id')
+        DOCKER_IMAGE = mame650/challenge
+        DOCKER_CREDENTIALS_ID = Dockerhub-credentials-id
+        KUBECONFIG_CREDENTIALS_ID = kubeconfig
     }
 
     stages {
-        stage('Checkout') {
+        stage('Clone Repository') {
             steps {
-                git url: 'https://github.com/mame-mbaye-6/ctf-challenges.git', branch: 'master', credentialsId: 'Github-token'
+                git 'https://github.com/mame-mbaye-6/ctf-challenges'
             }
         }
 
         stage('Build Docker Image') {
             steps {
                 script {
-                    dockerImage = docker.build("mame-mbaye/ctf-challenges:${env.BUILD_ID}")
+                    dockerImage = docker.build("${DOCKER_IMAGE}:${env.BUILD_ID}")
                 }
             }
         }
@@ -23,9 +25,8 @@ pipeline {
         stage('Push Docker Image') {
             steps {
                 script {
-                    docker.withRegistry('https://index.docker.io/v1/', 'Dockerhub-credentials-id') {
-                        dockerImage.push("${env.BUILD_ID}")
-                        dockerImage.push('latest')
+                    docker.withRegistry('https://index.docker.io/v1/', DOCKER_CREDENTIALS_ID) {
+                        dockerImage.push()
                     }
                 }
             }
@@ -34,16 +35,15 @@ pipeline {
         stage('Deploy to Kubernetes') {
             steps {
                 script {
-                    kubernetesDeploy configs: 'deployment.yaml', kubeConfig: [path: env.KUBE_CONFIG]
+                    withCredentials([file(credentialsId: KUBECONFIG_CREDENTIALS_ID, variable: 'KUBECONFIG')]) {
+                        sh '''
+                            chmod +x deploy.sh
+                            ./deploy.sh
+                        '''
+                    }
                 }
             }
         }
     }
-
-//    post {
-//        always {
-//            cleanWs()
-//        }
-//    }
 }
 

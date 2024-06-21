@@ -2,9 +2,9 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_IMAGE = mame650/challenge
-        DOCKER_CREDENTIALS_ID = Dockerhub-credentials-id
-        KUBECONFIG_CREDENTIALS_ID = kubeconfig
+        DOCKER_IMAGE = 'mame650/challenge:latest'
+        DOCKER_CREDENTIALS_ID = 'Dockerhub-credentials-id'
+        KUBECONFIG_CREDENTIALS_ID = 'kubeconfig'
     }
 
     stages {

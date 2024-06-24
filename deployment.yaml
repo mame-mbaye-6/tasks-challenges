@@ -1,8 +1,12 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+<<<<<<< HEAD
   name: hello-world-deployment
   namespace: challenge1
+=======
+  name: hello-world
+>>>>>>> 7a651e4 (first task)
 spec:
   replicas: 1
   selector:
@@ -14,8 +18,13 @@ spec:
         app: hello-world
     spec:
       containers:
+<<<<<<< HEAD
       - name: hello-world-container
         image: mame650/challenge:latest 
+=======
+      - name: hello-world
+        image: mame650/hello-world:latest
+>>>>>>> 7a651e4 (first task)
         ports:
         - containerPort: 8080
 ---
@@ -24,10 +33,21 @@ kind: Service
 metadata:
   name: hello-world-service
 spec:
+<<<<<<< HEAD
+=======
+  type: NodePort
+>>>>>>> 7a651e4 (first task)
   selector:
     app: hello-world
   ports:
     - protocol: TCP
+<<<<<<< HEAD
       port: 80
       targetPort: 8080
   type: LoadBalancer
+=======
+      port: 8080
+      targetPort: 8080
+      nodePort: 30001
+
+>>>>>>> 7a651e4 (first task)

@@ -27,7 +27,6 @@ pipeline {
                 script {
                     docker.withRegistry('https://index.docker.io/v1/', DOCKER_CREDENTIALS_ID) {
                         dockerImage.push()
-=======
         DOCKER_IMAGE = 'your-dockerhub-username/hello-world:latest'
         KUBERNETES_NAMESPACE = 'default'
     }
@@ -46,12 +45,10 @@ pipeline {
                 script {
                     docker.withRegistry('https://index.docker.io/v1/', 'dockerhub-credentials-id') {
                         docker.image(DOCKER_IMAGE).push()
->>>>>>> 7a651e4 (first task)
                     }
                 }
             }
         }
-<<<<<<< HEAD
 
         stage('Deploy to Kubernetes') {
             steps {
@@ -63,7 +60,6 @@ pipeline {
                         '''
                     }
                 }
-=======
         
         stage('Deploy to Kubernetes') {
             steps {

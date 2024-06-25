@@ -2,7 +2,6 @@ pipeline {
     agent any
 
     environment {
-<<<<<<< HEAD
         DOCKER_IMAGE = 'mame650/challenge:latest'
         DOCKER_CREDENTIALS_ID = 'Dockerhub-credentials-id'
         KUBECONFIG_CREDENTIALS_ID = 'kubeconfig'
@@ -11,7 +10,7 @@ pipeline {
     stages {
         stage('Clone Repository') {
             steps {
-                git 'https://github.com/mame-mbaye-6/ctf-challenges'
+                git 'https://github.com/mame-mbaye-6/tasks-challenges'
             }
         }
 
@@ -70,7 +69,6 @@ pipeline {
             steps {
                 sh 'chmod +x deploy.sh'
                 sh './deploy.sh'
->>>>>>> 7a651e4 (first task)
             }
         }
     }
